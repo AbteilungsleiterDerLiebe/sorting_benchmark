@@ -11,14 +11,17 @@ include_directories(include)
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
 
-add_executable(Benchmark
-  src/benchmark.cpp
-  include/benchmark.h
-)
+#add_executable(Benchmark
+#  src/benchmark.cpp
+#  include/benchmark.h
+#)
 
 cuda_add_executable(
-    cuda_sort
-    src/cuda_sort.cu
+  cuda_sort
+  include/benchmark.h
+  include/cuda_sort.h
+  src/benchmark.cpp
+  src/cuda_sort.cu
 )
 	
 	# Pass options to NVCC
