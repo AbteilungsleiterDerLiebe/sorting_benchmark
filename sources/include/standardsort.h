@@ -5,5 +5,6 @@
 class Standardsort : public I_benchmark_prototype {
 
 public:
+	Standardsort();
 	virtual void run(int * unsortedInts, int length) override;
 };

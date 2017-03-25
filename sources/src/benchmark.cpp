@@ -22,14 +22,27 @@ benchmark::benchmark()
 	// radix using CUDA
 	benchvec.push_back(std::move(std::unique_ptr<cuda_radix_sort>(new cuda_radix_sort)));
 	
-	int * values = (int*)malloc(NUM_VALS * sizeof(int));
-	array_fill(values, NUM_VALS);
-
-	for (auto it(benchvec.begin()), ite(benchvec.end()); it != ite; ++it) {
-		int * testvalues = values;
-		(*it)->measure(testvalues, NUM_VALS);
-		//std::cout << "testout: " << testvalues[19] << " " << testvalues[20] << " " << testvalues[21] << " " << testvalues[22] << std::endl;
+	std::vector<int> NUM_VAL = { 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864};
+	for (int val : NUM_VAL) {
+		for (auto it(benchvec.begin()), ite(benchvec.end()); it != ite; ++it) {
+			int * values = (int*)malloc(val * sizeof(int));
+			array_fill(values, val);
+			int * testvalues = values;
+			//	std::cout << "testout: " << testvalues[19] << " " << testvalues[20] << " " << testvalues[21] << " " << testvalues[22] << std::endl;
+			std::cout << val << std::endl << (*it)->name << std::endl;
+			(*it)->measure(testvalues, val);
+			//	std::cout << "testout: " << testvalues[19] << " " << testvalues[20] << " " << testvalues[21] << " " << testvalues[22] << std::endl;
+		}
 	}
+	//for (auto it(benchvec.begin()), ite(benchvec.end()); it != ite; ++it) {
+	//	int * values = (int*)malloc(NUM_VALS * sizeof(int));
+	//	array_fill(values, NUM_VALS);
+	//	int * testvalues = values;
+	////	std::cout << "testout: " << testvalues[19] << " " << testvalues[20] << " " << testvalues[21] << " " << testvalues[22] << std::endl;
+	//	std::cout << (*it)->name << " "; 
+	//	(*it)->measure(testvalues, NUM_VALS);		
+	////	std::cout << "testout: " << testvalues[19] << " " << testvalues[20] << " " << testvalues[21] << " " << testvalues[22] << std::endl;
+	//}
 
 }
 

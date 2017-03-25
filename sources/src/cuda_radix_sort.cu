@@ -1,50 +1,44 @@
 /*
 http://stackoverflow.com/questions/26206544/parallel-radix-sort-how-would-this-implementation-actually-work-are-there-some
 */
-
 #include "cuda_radix_sort.cuh"
-#include <algorithm>
-#include <stdio.h>
-#include <stdlib.h>
+#include <thrust/device_vector.h>
+#include <thrust/sort.h>
+#include <thrust/copy.h>
+#include <thrust/detail/type_traits.h>
+#include <cstdlib>
+
 
 cuda_radix_sort::cuda_radix_sort()
 {
+	name = "cuda radix sort";
 }
 
 void cuda_radix_sort::run(int * unsortedInts, int length)
 {
-	cudaSetDevice(0);
-	int* v;
-	cudaMalloc(&v, length * sizeof(int));
-	cudaMemcpy(v, unsortedInts, length * sizeof(int), cudaMemcpyHostToDevice);
+	thrust::device_vector<int> d_data(unsortedInts, unsortedInts + length);
 
-	try {
-		thrust::sort(thrust::device_ptr<int>(v), thrust::device_ptr<int>(v + length));
-	}
-	catch (thrust::system_error &e) {
-		printf("Error: %s \n", e.what());
-	}
+	thrust::sort(d_data.begin(), d_data.end());
 
-	//// generate 32M random numbers serially
-
-	//thrust::host_vector<int> h_vec(unsortedInts, unsortedInts + length);
-
-	//// transfer data to the device
-
-	//thrust::device_vector<int> d_vec = h_vec;
-
-	//// sort data on the device (Only HOST VECTOR compiles!)
-
-	//thrust::sort(d_vec.begin(), d_vec.end());
-
-	//// transfer data back to host
-
-	//thrust::copy(d_vec.begin(), d_vec.end(), h_vec.begin());
+	thrust::copy(d_data.begin(), d_data.end(), unsortedInts);
 }
-
-
 
 void cuda_radix_sort::radix_sort(int * values)
 {
 
 }
+
+
+extern "C" __declspec(dllexport) void __cdecl GPURadixSort(int*, unsigned int);
+
+extern void GPURadixSort(int* data, unsigned int numElements)
+{
+	thrust::device_vector<int> d_data(data, data + numElements);
+
+	thrust::sort(d_data.begin(), d_data.end());
+
+	thrust::copy(d_data.begin(), d_data.end(), data);
+}
+
+
+

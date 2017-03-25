@@ -5,5 +5,6 @@
 class Stdboostsort : public I_benchmark_prototype {
 
 public:
+	Stdboostsort();
 	virtual void run(int * unsortedInts, int length) override;
 };
